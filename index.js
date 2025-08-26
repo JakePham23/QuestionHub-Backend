@@ -21,7 +21,10 @@ app.use(express.static(path.join(__dirname, 'src/public')));
 // Middlewares
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      'https://questionhub-education.vercel.app' // Thêm domain của Vercel
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
