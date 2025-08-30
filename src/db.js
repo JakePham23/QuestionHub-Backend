@@ -24,7 +24,7 @@ class PostgreSQLDatabase {
     this.pool.on("connect", () => {
       console.log("PostgreSQL Database connected");
     });
-
+    console.log(this.pool);
     this.pool.on("error", (err) => {
       console.error("Unexpected error on idle client", err);
     });

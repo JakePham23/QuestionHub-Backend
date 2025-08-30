@@ -1,6 +1,6 @@
 // src/routes/exams.js
 import { Router } from "express";
-import db from "../db.js";
+import db from "../../db.js";
 import express from "express";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
@@ -34,7 +34,7 @@ const authenticateToken = async (req, res, next) => {
 };
 
 // 1. Google Sign-In
-router.post("/auth/google/signin", async (req, res) => {
+router.post("/google/signin", async (req, res) => {
   try {
     const { idToken } = req.body;
     console.log(" Received ID token from backend:", idToken);
@@ -180,7 +180,7 @@ router.post("/auth/google/signin", async (req, res) => {
   }
 });
 
-router.post("/auth/refresh-token", async (req, res) => {
+router.post("/refresh-token", async (req, res) => {
   try {
     const { refreshToken } = req.body;
     if (!refreshToken) {
@@ -253,7 +253,7 @@ router.post("/auth/refresh-token", async (req, res) => {
   }
 });
 
-router.get("/auth/me", authenticateToken, async (req, res) => {
+router.get("/me", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
 
@@ -294,7 +294,7 @@ router.get("/auth/me", authenticateToken, async (req, res) => {
   }
 });
 // 4. Logout
-router.post("/auth/logout", authenticateToken, async (req, res) => {
+router.post("/logout", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
 
@@ -313,7 +313,7 @@ router.post("/auth/logout", authenticateToken, async (req, res) => {
   }
 });
 
-router.post("/auth/signup", async (req, res) => {
+router.post("/signup", async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -414,7 +414,7 @@ async function sendOTPEmail(email, otp) {
   }
 }
 // Step 1: Request password reset (send OTP)
-router.post("/auth/forgot-password", async (req, res) => {
+router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) {
@@ -466,7 +466,7 @@ router.post("/auth/forgot-password", async (req, res) => {
 });
 
 // Step 2: Verify OTP
-router.post("/auth/verify-otp", async (req, res) => {
+router.post("/verify-otp", async (req, res) => {
   try {
     const { email, otp } = req.body;
 
@@ -504,7 +504,7 @@ router.post("/auth/verify-otp", async (req, res) => {
   }
 });
 
-router.post("/auth/reset-password", async (req, res) => {
+router.post("/reset-password", async (req, res) => {
   try {
     const { email, otp, newPassword, confirmPassword } = req.body;
 

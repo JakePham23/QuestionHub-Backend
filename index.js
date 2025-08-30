@@ -4,8 +4,7 @@ import path from 'path'; // Thêm import path
 import { fileURLToPath } from 'url'; // Thêm import fileURLToPath
 
 // import examRoutes from './src/routes/exams.js'; // <-- Bỏ comment
-import dataRouter from './src/routes/data_info.js'; // <-- Giữ nguyên
-import authRouter from './src/routes/auth.js';
+import dataRouter from './src/routes/index.js'; // <-- Giữ nguyên
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -37,9 +36,7 @@ app.use(express.json());
 import "./src/db.js";
 
 // --- Routes ---
-// app.use('/api', examRoutes); // <-- Bỏ comment
-app.use('/api', dataRouter); // <-- Giữ nguyên
-app.use('/api', authRouter)
+app.use('/api', dataRouter); 
 app.listen(PORT, () => {
   console.log(`🚀 Backend server đang chạy tại http://localhost:${PORT}`);
 });
