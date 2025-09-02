@@ -1,23 +1,20 @@
 import { Router } from 'express';
 import db from '../../db.js';
+import ResponseFactory from '../../responses/responseFactory.js';
+import { ResponseTypes } from '../../responses/response.types.js';
 
 const router = Router();
 
 // Endpoint để lấy danh sách đề thi (có thể lọc theo lớp và môn)
 router.get('/exams', async (req, res) => {
-    // Lấy gradeId và subjectId từ query string
     const { gradeId, subjectId } = req.query;
-    
     try {
         let rows;
-
-        // Nếu có cả gradeId và subjectId, sử dụng hàm SQL function
         if (gradeId && subjectId) {
             const query = `SELECT * FROM get_exams_by_grade_and_subject($1, $2)`;
             const { rows: fetchedRows } = await db.query(query, [gradeId, subjectId]);
             rows = fetchedRows;
         } else {
-            // Nếu không có, lấy tất cả các đề thi
             const query = `
                 SELECT 
                     e.exam_id,
@@ -36,14 +33,20 @@ router.get('/exams', async (req, res) => {
         }
 
         if (rows.length === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy đề thi nào phù hợp.' });
+            return ResponseFactory.create(ResponseTypes.NOT_FOUND, {
+                message: 'Không tìm thấy đề thi nào phù hợp.'
+            }).send(res);
         }
         
-        res.json(rows);
+        return ResponseFactory.create(ResponseTypes.SUCCESS, {
+            data: rows
+        }).send(res);
 
     } catch (error) {
         console.error('Lỗi khi lấy dữ liệu đề thi:', error);
-        res.status(500).json({ error: 'Lỗi server nội bộ.' });
+        return ResponseFactory.create(ResponseTypes.INTERNAL_ERROR, {
+            message: 'Lỗi server nội bộ'
+        }).send(res);
     }
 });
 
@@ -53,21 +56,27 @@ router.get('/exams/:examId', async (req, res) => {
     
     try {
         const query = `SELECT * FROM get_exam_by_id($1)`;
-        
         const { rows } = await db.query(query, [examId]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy đề thi.' });
+            return ResponseFactory.create(ResponseTypes.NOT_FOUND, {
+                message: 'Không tìm thấy đề thi.'
+            }).send(res);
         }
         
-        res.json(rows[0]); 
+        return ResponseFactory.create(ResponseTypes.SUCCESS, {
+            data: rows[0]
+        }).send(res);
 
     } catch (error) {
         console.error('Lỗi khi lấy dữ liệu đề thi:', error);
-        res.status(500).json({ error: 'Lỗi server nội bộ.' });
+        return ResponseFactory.create(ResponseTypes.INTERNAL_ERROR, {
+            message: 'Lỗi server nội bộ'
+        }).send(res);
     }
 });
-// Thêm endpoint mới để lấy chi tiết câu hỏi và đáp án của một đề thi
+
+// Endpoint để lấy chi tiết câu hỏi và đáp án của một đề thi
 router.get('/exams/:examId/questions', async (req, res) => {
     const { examId } = req.params;
 
@@ -76,53 +85,67 @@ router.get('/exams/:examId/questions', async (req, res) => {
         const { rows } = await db.query(query, [examId]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy câu hỏi nào cho đề thi này.' });
+            return ResponseFactory.create(ResponseTypes.NOT_FOUND, { 
+                message: 'Không tìm thấy câu hỏi nào cho đề thi này.' 
+            }).send(res);
         }
 
-        res.json(rows);
+        return ResponseFactory.create(ResponseTypes.SUCCESS, {
+            data: rows
+        }).send(res);
     } catch (error) {
         console.error('Lỗi khi lấy dữ liệu câu hỏi và đáp án:', error);
-        res.status(500).json({ error: 'Lỗi server nội bộ.' });
+        return ResponseFactory.create(ResponseTypes.INTERNAL_ERROR, {
+            message: 'Lỗi server nội bộ'
+        }).send(res);
     }
 });
+
 // Endpoint để lấy dữ liệu chương trình học
 router.get('/data_info', async (req, res) => {
     try {
-        const query = `
-            SELECT * FROM grade_subject_chapter;
-        `;
-        
+        const query = `SELECT * FROM grade_subject_chapter;`;
         const { rows } = await db.query(query);
     
         if (rows.length === 0) {
-            return res.status(404).json({ error: 'Không tìm thấy dữ liệu chương trình học.' });
+            return ResponseFactory.create(ResponseTypes.NOT_FOUND, {
+                message: 'Không tìm thấy dữ liệu chương trình học.'
+            }).send(res);
         }
         
-        res.json(rows);
-    
+        return ResponseFactory.create(ResponseTypes.SUCCESS, {
+            data: rows
+        }).send(res);
     } catch (error) {
         console.error('Lỗi khi lấy dữ liệu chương trình học:', error);
-        res.status(500).json({ error: 'Lỗi server nội bộ' });
+        return ResponseFactory.create(ResponseTypes.INTERNAL_ERROR, {
+            message: 'Lỗi server nội bộ'
+        }).send(res);
     }
 }); 
+
+// test exercise
 router.get('/chude1/luonggiac', async (req, res) => {
     try {
-        const query = `
-            SELECT * FROM answer_choices;
-        `;
-        
+        const query = `SELECT * FROM answer_choices;`;
         const { rows } = await db.query(query);
     
         if (rows.length === 0) {
-            return res.status(404).json({ error: 'Không tìm thấy dữ liệu chương trình học.' });
+            return ResponseFactory.create(ResponseTypes.NOT_FOUND, {
+                message: 'Không tìm thấy dữ liệu chương trình học.'
+            }).send(res);
         }
         
-        res.json(rows);
+        return ResponseFactory.create(ResponseTypes.SUCCESS, {
+            data: rows
+        }).send(res);
     
     } catch (error) {
         console.error('Lỗi khi lấy dữ liệu chương trình học:', error);
-        res.status(500).json({ error: 'Lỗi server nội bộ' });
+        return ResponseFactory.create(ResponseTypes.INTERNAL_ERROR, {
+            message: 'Lỗi server nội bộ'
+        }).send(res);
     }
 }); 
-// Đừng quên export router
+
 export default router;
