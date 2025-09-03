@@ -141,7 +141,7 @@ router.post("/google/signin", async (req, res) => {
 
     return ResponseFactory.create(ResponseTypes.SUCCESS, {
       message: "Google sign-in successful.",
-      data: {
+      metadata: {
         user: {
           id: user.user_id,
           email: user.email,
@@ -227,7 +227,7 @@ router.post("/refresh-token", async (req, res) => {
 
     return ResponseFactory.create(ResponseTypes.SUCCESS, {
       message: "Token refreshed successfully.",
-      data: {
+      metadata: {
         authToken: newAuthToken,
         refreshToken: newRefreshToken,
       },
@@ -259,7 +259,7 @@ router.get("/me", authenticateToken, async (req, res) => {
     const user = userResult.rows[0];
     return ResponseFactory.create(ResponseTypes.SUCCESS, {
       message: "User data retrieved successfully.",
-      data: {
+      metadata: {
         user: {
           id: user.user_id,
           email: user.email,
@@ -474,7 +474,7 @@ router.post("/verify-otp", async (req, res) => {
 
     return ResponseFactory.create(ResponseTypes.SUCCESS, {
       message: "OTP verified successfully. You can now reset your password.",
-      data: { email: sanitizedEmail },
+      metadata: { email: sanitizedEmail },
     }).send(res);
   } catch (error) {
     console.error("Error in verify-otp:", error);

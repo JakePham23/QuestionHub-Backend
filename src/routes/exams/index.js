@@ -39,7 +39,8 @@ router.get('/exams', async (req, res) => {
         }
         
         return ResponseFactory.create(ResponseTypes.SUCCESS, {
-            data: rows
+            metadata: rows,
+            message: 'Lấy danh sách đề thi thành công.'
         }).send(res);
 
     } catch (error) {
@@ -65,7 +66,8 @@ router.get('/exams/:examId', async (req, res) => {
         }
         
         return ResponseFactory.create(ResponseTypes.SUCCESS, {
-            data: rows[0]
+            metadata: rows[0],
+            message: 'Lấy thông tin đề thi thành công.'
         }).send(res);
 
     } catch (error) {
@@ -91,7 +93,8 @@ router.get('/exams/:examId/questions', async (req, res) => {
         }
 
         return ResponseFactory.create(ResponseTypes.SUCCESS, {
-            data: rows
+            metadata: rows,
+            message: 'Lấy danh sách câu hỏi và đáp án thành công.'
         }).send(res);
     } catch (error) {
         console.error('Lỗi khi lấy dữ liệu câu hỏi và đáp án:', error);
@@ -114,7 +117,8 @@ router.get('/data_info', async (req, res) => {
         }
         
         return ResponseFactory.create(ResponseTypes.SUCCESS, {
-            data: rows
+            metadata: rows,
+            message: 'Lấy dữ liệu chương trình học thành công.'
         }).send(res);
     } catch (error) {
         console.error('Lỗi khi lấy dữ liệu chương trình học:', error);
@@ -137,7 +141,8 @@ router.get('/chude1/luonggiac', async (req, res) => {
         }
         
         return ResponseFactory.create(ResponseTypes.SUCCESS, {
-            data: rows
+            metadata: rows,
+            message: 'Lấy dữ liệu chương trình học thành công.'
         }).send(res);
     
     } catch (error) {

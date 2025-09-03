@@ -1,21 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path'; // Thêm import path
-import { fileURLToPath } from 'url'; // Thêm import fileURLToPath
-
 // import examRoutes from './src/routes/exams.js'; // <-- Bỏ comment
 import dataRouter from './src/routes/index.js'; // <-- Giữ nguyên
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-
-// Tùy chỉnh __dirname để tương thích với ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// --- Phục vụ file tĩnh (ảnh) ---
-// Thư mục 'public' sẽ chứa tất cả các file ảnh của bạn
-app.use(express.static(path.join(__dirname, 'src/public')));
 
 // Middlewares
 app.use(
