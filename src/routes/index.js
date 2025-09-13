@@ -4,10 +4,11 @@ import authRoutes from "./auth/index.js";
 import examRoutes from "./exams/index.js";
 import imageRoutes from "./images/index.js";
 import exerciseRoutes from "./exercises/index.js";
+import questionRoutes from "./questions/index.js";
 router.use("/auth", authRoutes);
 router.use("/", examRoutes);
 router.use("/", imageRoutes);
 router.use("/exercises", exerciseRoutes);
-
+router.use('/questions', questionRoutes);
 
 export default router;
