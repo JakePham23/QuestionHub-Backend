@@ -209,5 +209,33 @@ router.get('/:topicId/question-attempts', async (req, res) => {
   }
 });
 
+router.post('/update/topic-visit-log', async (req, res) => {
+  try {
+    const user_id = Number(req.query.user_id);
+    const topic_id = Number(req.query.topic_id);
+    const src = String(req.query.src || 'web');
+    const session_id = String(req.query.session_id || '');
+    const ip_hash = String(req.query.ip_hash || '');
+
+    if (!user_id || !topic_id) {
+      return ResponseFactory.create(ResponseTypes.BAD_REQUEST, {
+        message: 'Thiếu user_id hoặc topic_id'
+      }).send(res);
+    }
+
+    const query = `SELECT update_topic_visit_log($1, $2, $3, $4, $5)`;
+    await db.query(query, [user_id, topic_id, src, session_id, ip_hash]);
+
+    return ResponseFactory.create(ResponseTypes.SUCCESS, {
+      message: 'Cập nhật lượt truy cập topic thành công.'
+    }).send(res);
+
+  } catch (error) {
+    console.error('Lỗi khi cập nhật lượt truy cập topic', error);
+    return ResponseFactory.create(ResponseTypes.INTERNAL_ERROR, {
+      message: 'Lỗi server nội bộ.'
+    }).send(res);
+  }
+});
 
 export default router;

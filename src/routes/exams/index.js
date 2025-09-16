@@ -6,7 +6,7 @@ import { ResponseTypes } from '../../responses/response.types.js';
 const router = Router();
 
 // Endpoint để lấy danh sách đề thi (có thể lọc theo lớp và môn)
-router.get('/exams', async (req, res) => {
+router.get('/', async (req, res) => {
     const { gradeId, subjectId } = req.query;
     try {
         let rows;
@@ -52,7 +52,7 @@ router.get('/exams', async (req, res) => {
 });
 
 // Endpoint để lấy thông tin chi tiết một đề thi
-router.get('/exams/:examId', async (req, res) => {
+router.get('/:examId', async (req, res) => {
     const { examId } = req.params;
     
     try {
@@ -79,7 +79,7 @@ router.get('/exams/:examId', async (req, res) => {
 });
 
 // Endpoint để lấy chi tiết câu hỏi và đáp án của một đề thi
-router.get('/exams/:examId/questions', async (req, res) => {
+router.get('/:examId/questions', async (req, res) => {
     const { examId } = req.params;
 
     try {
@@ -104,30 +104,34 @@ router.get('/exams/:examId/questions', async (req, res) => {
     }
 });
 
-// Endpoint để lấy dữ liệu chương trình học
-router.get('/data_info', async (req, res) => {
-    try {
-        const query = `SELECT * FROM grade_subject_chapter;`;
-        const { rows } = await db.query(query);
-    
-        if (rows.length === 0) {
-            return ResponseFactory.create(ResponseTypes.NOT_FOUND, {
-                message: 'Không tìm thấy dữ liệu chương trình học.'
-            }).send(res);
-        }
-        
-        return ResponseFactory.create(ResponseTypes.SUCCESS, {
-            metadata: rows,
-            message: 'Lấy dữ liệu chương trình học thành công.'
-        }).send(res);
-    } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu chương trình học:', error);
-        return ResponseFactory.create(ResponseTypes.INTERNAL_ERROR, {
-            message: 'Lỗi server nội bộ'
-        }).send(res);
+
+router.post('/update/exam-visit-log', async (req, res) => {
+  try {
+    const user_id = Number(req.query.user_id);
+    const exam_id = Number(req.query.exam_id);
+    const src = String(req.query.src || 'web');
+    const session_id = String(req.query.session_id || '');
+    const ip_hash = String(req.query.ip_hash || '');
+
+    if (!user_id || !exam_id) {
+      return ResponseFactory.create(ResponseTypes.BAD_REQUEST, {
+        message: 'Thiếu user_id hoặc exam_id'
+      }).send(res);
     }
-}); 
 
+    const query = `SELECT update_exam_visit_log($1, $2, $3, $4, $5)`;
+    await db.query(query, [user_id, exam_id, src, session_id, ip_hash]);
 
+    return ResponseFactory.create(ResponseTypes.SUCCESS, {
+      message: 'Cập nhật lượt truy cập exam thành công.'
+    }).send(res);
+
+  } catch (error) {
+    console.error('Lỗi khi cập nhật lượt truy cập topic', error);
+    return ResponseFactory.create(ResponseTypes.INTERNAL_ERROR, {
+      message: 'Lỗi server nội bộ.'
+    }).send(res);
+  }
+});
 
 export default router;
